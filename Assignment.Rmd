@@ -35,6 +35,9 @@ header-includes:
   - \usepackage{booktabs}
   - \usepackage{colortbl}
   - \usepackage{caption}
+  - \usepackage{fontawesome5}
+  - \usepackage{academicons}
+  - \usepackage{xcolor}
   - \geometry{paperwidth=6.5in, paperheight=9in, left=0.5in, right=0.5in, top=0.5in, bottom=0.5in}
   - \usepackage{setspace}
   - \onehalfspacing
@@ -46,7 +49,7 @@ documentclass: extarticle
 
 ```{=latex}
 \begin{center}
-{\Large\textbf{Frontiers in Density Estimation: An Unified Study of Kernel, Edgeworth, and Saddle Point Approaches}}\\[1em]
+{\Large\textbf{Beyond the Basics: Advanced Density Estimation with Kernel, Edgeworth, and Saddle Point Approaches}}\\[1em]
 
 \normalsize
 Sourav Biswas$^*$\\
@@ -248,7 +251,7 @@ Based on a sample $U_1,U_2,\ldots,U_m\overset{iid}{\sim}f_U\left(\centerdot\righ
 h^{opt}_{Ker}\coloneqq\underset{h}{\arg\min}\left[\int_{\mathbb{R}}\left\{\hat{f}^{K}_{h}\left(u\right)\right\}^2du-\frac{2}{m}\sum_{i=1}^m\hat{f}^{K}_{h,-i}\left(U_i\right)\right].
 $$
 
-We have taken a sample of size $500$ by generating samples using \autoref{thm:convexp} for the estimation procedure with bandwidth selected through LSCV. The estimated density looks like this,
+We have taken a sample of size $500$ by generating samples using \autoref{thm:convexp} for the estimation procedure with bandwidth selected through LSCV. The estimated density is presented as follows,
 
 ```{r,echo=F}
 library(ggplot2)
@@ -322,8 +325,12 @@ $$
 The identities $\kappa_1=\mu$ and $\kappa_2=\sigma^2$ hold in general. For notational convenience, we let $\rho_k=\frac{\kappa_j}{\sigma^j}$. The estimated density of the standardized sum $T_n=\left(\frac{S_n-n\mu}{\sigma}\right)$ is, \begin{equation}\label{eq:sden}
 \phi\left(u\right)\left[1+\frac{\rho_3H_3\left(u\right)}{6\sqrt{n}}+\frac{\rho_4H_4\left(u\right)}{24{n}}+\frac{\rho_3^2H_6\left(u\right)}{72{n}}+\mathcal{O}\left(n^{-\frac{3}{2}}\right)\right],
 \end{equation} where, $H_k\left(\centerdot\right)$ is the Hermite polynomial of $k$th order expressed as,$$
-H_k\left(u\right)=\left(-1\right)^ke^{\frac{1}{2}u^2}\frac{d^k}{du^k}e^{-\frac{1}{2}u^2}.
+H_k\left(u\right)=\left(-1\right)^ke^{\frac{1}{2}u^2}\frac{d^k}{du^k}e^{-\frac{1}{2}u^2}\implies\phi\left(u\right)H_k\left(u\right)=\left(-1\right)^k\frac{d^k}{du^k}\phi\left(u\right).
 $$
+
+Note that, integration of the above identity of the Hermite polynomial gives,$$\begin{aligned}\int_{-\infty}^u\phi\left(x\right)H_k\left(x\right)dx&=\left(-1\right)^k\int_{-\infty}^ud\left(\frac{d^{k-1}}{dx^{k-1}}\phi\left(x\right)\right)\\[1mm]&=\left(-1\right)^{k}\frac{d^{k-1}}{du^{k-1}}\phi\left(u\right)\\[1mm]&=-\phi\left(u\right)H_{k-1}\left(u\right).\end{aligned}$$
+
+Which can be used to get $H_n\left(u\right)$'s recursively.
 
 Consequently from \eqref{eq:sden}, density of $S_n$ can be estimated through,\begin{equation}\label{eq:edge}
 \hat{f}^{E}\left(u\right)\coloneqq\frac{1}{\sigma}\phi\left(\frac{u-\mu}{\sigma}\right)\left[1+\frac{\rho_3H_3\left(\frac{u-\mu}{\sigma}\right)}{6\sqrt{n}}+\frac{\rho_4H_4\left(\frac{u-\mu}{\sigma}\right)}{24{n}}+\frac{\rho_3^2H_6\left(\frac{u-\mu}{\sigma}\right)}{72{n}}+\mathcal{O}\left(n^{-\frac{3}{2}}\right)\right].
@@ -455,7 +462,7 @@ The procedure of estimating $f_U\left(\centerdot\right)$ at $u$ through exponent
 \sum_{j=1}^n\frac{1}{\left(j-t_0\right)}=u.
 $$
 
-This equation need to be solved numerically. The saddle point approximated density looks like,
+This equation need to be solved numerically. The saddle point approximated density is presented as follows,
 
 ```{r,echo=F}
 den.saddle1 <- function(x0, n = 10) {
@@ -717,5 +724,11 @@ kable(df,
 Both saddle point expansions clearly outperform the Edgeworth expansion except very close to the mean $\sum_{j=1}^{10}\frac{1}{j}\approx2.93$. Indeed, it's remarkable how well the saddle point expansions do considering how far this example is from the ideal of a sum of i.i.d. random variables. The refined saddle point expansion \eqref{eq:saddleII} is an improvement over the ordinary saddle point expansion \eqref{eq:saddleI} in the tails of the density but not necessarily in the center. @daniels1987saddle considers variation on this problem involving pure birth processes.
 
 Remember, KDE is based on a sample, which is more realistic scenario then the other two methods, which assumes the CGF to be known. So, they are not comparable with KDE at any stage.
+
+# Conclusion
+
+This study has systematically compared kernel density estimation (KDE), Edgeworth expansions, and saddle point approximations for estimating the density of a sample range from an exponential distribution, revealing distinct trade-offs: KDE excels in data-driven flexibility, making it practically viable, whereas Edgeworth expansions and saddle point approximations, despite offering theoretical refinements—such as improved tail accuracy in the latter—lack practical utility due to their reliance on a known cumulant generating function, an unrealistic assumption in real-world scenarios. These findings, aggregated through density plots and error comparisons, provide a framework for method selection, emphasizing KDE’s applicability. Future work could explore hybrid approaches to bridge theoretical precision with practical use.
+
+Entire analysis has been implemented in R. You can find the codes on \href{https://github.com/SB2003ISI/DensityEstimation/tree/main}{\textcolor{NavyBlue}{\faGithub\,GitHub}}.
 
 ------------------------------------------------------------------------

@@ -247,7 +247,7 @@ Based on a sample $U_1,U_2,\ldots,U_m\overset{iid}{\sim}f_U\left(\centerdot\righ
 \hat{f}^{K}_{h_{Ker}}\left(u\right)\coloneqq\frac{1}{m}\sum_{i=1}^m\frac{1}{h_{Ker}}Ker\left(\frac{u-U_i}{h_{Ker}}\right).
 \end{equation} Here, $Ker$ is taken to be **Gaussian Kernel**. In order to select the bandwidth $h_{Ker}$ is selected via Least Square Cross Validation (LSCV) which gives $h^{opt}_{Ker}$,$$
 h^{opt}_{Ker}\coloneqq\underset{h}{\arg\min}\left[\int_{\mathbb{R}}\left\{\hat{f}^{K}_{h}\left(u\right)\right\}^2du-\frac{2}{m}\sum_{i=1}^m\hat{f}^{K}_{h,-i}\left(U_i\right)\right].
-$$We have taken a sample of size $500$ by generating samples using \autoref{thm:convexp} for the estimation procedure with bandwidth selected through LSCV. The estimated density is presented as follows,
+$$We have taken a sample of size $1000$ by generating samples using \autoref{thm:convexp} for the estimation procedure with bandwidth selected through LSCV. The estimated density is presented as follows,
 
 ```{r,echo=F}
 library(ggplot2)
@@ -273,7 +273,7 @@ rangesamp=function(m,n=10){
 #--Kernel Density Estimation---
 # Compute the kernel density estimate
 
-x <- rangesamp(m = 500)
+x <- rangesamp(m = 1000)
 bw_ls <- bw.ucv(x)
 dens <- density(x, bw = bw_ls, kernel = "gaussian")
 
@@ -312,13 +312,13 @@ Although kernel density estimation provided a reasonable approximation, further 
 
 # Edgeworth Expansions {#sec:edge}
 
-An Edgeworth Expansion is an asymptotic approximation to a density or distribution function (@hall1992bootstrap). A detailed description on density estimation through Edgeworth expansions can be found in @lange2010numerical for sum of i.i.d. random variables using the cumulant generating function $K$ of the population. But here $Y_j$'s are independent, **not identical**. However, we shall forcefully use this convention,$$
+An Edgeworth Expansion is an asymptotic approximation to a density or distribution function (@hall1992bootstrap). A detailed description on density approximation through Edgeworth expansions can be found in @lange2010numerical for sum of i.i.d. random variables using the cumulant generating function $K$ of the population. But here $Y_j$'s are independent, **not identical**. However, we shall forcefully use this convention,$$
 nK\left(t\right)\approx-\sum_{j=1}^n\ln\left(1-\frac{t}{j}\right).
 $$From which we get,$$
 nK^{\left(k\right)}\left(t\right)=\left(k-1\right)!\sum_{j=1}^n\frac{1}{\left(j-t\right)^k}.
 $$Subsequently, $k$th cumulant is, $$
 \kappa_{k}=K^{\left(k\right)}\left(0\right).
-$$The identities $\kappa_1=\mu$ and $\kappa_2=\sigma^2$ hold in general. For notational convenience, we let $\rho_k=\frac{\kappa_j}{\sigma^j}$. The estimated density of the standardized sum $T_n=\left(\frac{S_n-n\mu}{\sigma}\right)$ is, \begin{equation}\label{eq:sden}
+$$The identities $\kappa_1=\mu$ and $\kappa_2=\sigma^2$ hold in general. For notational convenience, we let $\rho_k=\frac{\kappa_j}{\sigma^j}$. The approximated density of the standardized sum $T_n=\left(\frac{S_n-n\mu}{\sigma}\right)$ is, \begin{equation}\label{eq:sden}
 \phi\left(u\right)\left[1+\frac{\rho_3H_3\left(u\right)}{6\sqrt{n}}+\frac{\rho_4H_4\left(u\right)}{24{n}}+\frac{\rho_3^2H_6\left(u\right)}{72{n}}+\mathcal{O}\left(n^{-\frac{3}{2}}\right)\right],
 \end{equation} where, $H_k\left(\centerdot\right)$ is the Hermite polynomial of $k$th order expressed as,$$
 H_k\left(u\right)=\left(-1\right)^ke^{\frac{1}{2}u^2}\frac{d^k}{du^k}e^{-\frac{1}{2}u^2}\implies\phi\left(u\right)H_k\left(u\right)=\left(-1\right)^k\frac{d^k}{du^k}\phi\left(u\right).
@@ -446,7 +446,7 @@ However, this procedure didn't worked considerably well near the tails. That's w
 
 The expansion \eqref{eq:edge} suggest that the rate of convergence of $S_n$ to normality is governed by the correction term $\mathcal{O}\left(n^{-\frac{1}{2}}\right)$. However, this pessimistic impression is misleading at $u=0$ because $H_3\left(0\right)=0$ (@lange2010numerical). The device known as exponential titling exploits this peculiarity (@barndorff1989asymptotic).
 
-The procedure of estimating $f_U\left(\centerdot\right)$ at $u$ through exponential titling has been described in @lange2010numerical. Which gives Saddle Point approximation I using \eqref{eq:edge} as, \begin{equation}\label{eq:saddleI}
+The procedure of approximating $f_U\left(\centerdot\right)$ at $u$ through exponential titling has been described in @lange2010numerical. Which gives Saddle Point approximation I using \eqref{eq:edge} as, \begin{equation}\label{eq:saddleI}
 \hat{f}^{I}\left(u\right)\coloneqq\frac{e^{-t_0u+nK\left(t_0\right)}}{\sqrt{2\pi nK''\left(t_0\right)}}\left[1+\mathcal{O}\left(n^{-1}\right)\right],
 \end{equation} where, $t_0$ satisfies, $$
 \sum_{j=1}^n\frac{1}{\left(j-t_0\right)}=u.
